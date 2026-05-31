@@ -1,0 +1,40 @@
+{% extends 'loans/base.html' %}
+{% block title %}Pending Amounts — Cartoons Boys{% endblock %}
+{% block content %}
+<div class="metrics">
+  <div class="metric orange"><div class="metric-label">Total Outstanding</div><div class="metric-value orange">₹{{ total_pending|floatformat:0 }}</div><div class="metric-sub">{{ pending|length }} borrowers</div></div>
+</div>
+<div class="section-head"><h2>Pending / Due Amounts</h2><span class="count-pill">{{ pending|length }}</span></div>
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>Sr</th><th>Date</th><th>Name</th>
+      <th style="text-align:right">Loan</th>
+      <th style="text-align:right">Received</th>
+      <th style="text-align:right">Balance Due</th>
+      <th>Rate</th><th>Duration</th><th>Remark</th>
+      {% if user.is_staff %}<th>Actions</th>{% endif %}
+    </tr>
+  </thead>
+  <tbody>
+  {% for loan in pending %}
+    <tr>
+      <td class="muted">{{ loan.sr }}</td>
+      <td class="muted">{{ loan.date|date:"d-m-Y" }}</td>
+      <td class="name-cell">{{ loan.name }}</td>
+      <td class="amt">₹{{ loan.loan_amount|floatformat:0 }}</td>
+      <td class="amt" style="color:var(--green)">₹{{ loan.received_amount|floatformat:0 }}</td>
+      <td class="amt bal-due">₹{{ loan.balance|floatformat:0 }}</td>
+      <td>{{ loan.interest_rate }}</td>
+      <td class="muted">{{ loan.duration|default:"—" }}</td>
+      <td class="muted">{{ loan.remark|default:"—" }}</td>
+      {% if user.is_staff %}<td><a href="{% url 'edit_loan' loan.pk %}" class="btn btn-sm btn-edit">Edit</a></td>{% endif %}
+    </tr>
+  {% empty %}
+    <tr><td colspan="10" style="text-align:center;padding:2.5rem;color:var(--green)">✓ No pending amounts! All loans cleared.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

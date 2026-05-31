@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Cartoons Boys{% endblock %}</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0f14;--surface:#151820;--surface2:#1c2030;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#e8eaf0;--muted:#7a7f94;--accent:#f0b429;--accent2:#3b82f6;--green:#34d399;--red:#f87171;--orange:#fb923c;--font:'Syne',sans-serif;--mono:'DM Mono',monospace}
+html{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px}
+body{min-height:100vh}
+
+/* NAV */
+nav{background:var(--surface);border-bottom:1px solid var(--border);padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;gap:1rem;flex-wrap:wrap}
+.nav-brand{font-size:1rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.nav-brand span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.nav-links a,.nav-btn{font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:6px 12px;border-radius:6px;text-decoration:none;color:var(--muted);transition:all .15s;border:none;cursor:pointer;background:transparent}
+.nav-links a:hover,.nav-btn:hover{color:var(--text);background:var(--surface2)}
+.nav-links a.active{color:var(--accent);background:rgba(240,180,41,.08)}
+.nav-user{font-size:11px;color:var(--muted);font-family:var(--mono);display:flex;align-items:center;gap:8px}
+.badge-admin{background:rgba(240,180,41,.12);color:var(--accent);border:1px solid rgba(240,180,41,.2);font-size:9px;padding:2px 6px;border-radius:99px;letter-spacing:.06em;text-transform:uppercase}
+.badge-viewer{background:rgba(59,130,246,.12);color:var(--accent2);border:1px solid rgba(59,130,246,.2);font-size:9px;padding:2px 6px;border-radius:99px;letter-spacing:.06em;text-transform:uppercase}
+
+/* MAIN */
+.main{padding:2rem;max-width:1400px;margin:0 auto}
+
+/* MESSAGES */
+.messages{margin-bottom:1.5rem;display:flex;flex-direction:column;gap:8px}
+.msg{padding:10px 16px;border-radius:8px;font-size:13px;border-left:3px solid}
+.msg-success{background:rgba(52,211,153,.08);border-color:var(--green);color:var(--green)}
+.msg-error{background:rgba(248,113,113,.08);border-color:var(--red);color:var(--red)}
+.msg-info{background:rgba(59,130,246,.08);border-color:var(--accent2);color:var(--accent2)}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:2rem}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;position:relative;overflow:hidden;transition:border-color .2s}
+.metric:hover{border-color:var(--border2)}
+.metric::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.metric.gold::before{background:var(--accent)}.metric.blue::before{background:var(--accent2)}
+.metric.green::before{background:var(--green)}.metric.orange::before{background:var(--orange)}
+.metric.red::before{background:var(--red)}
+.metric-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.metric-value{font-size:1.4rem;font-weight:700;font-family:var(--mono);line-height:1}
+.metric-value.gold{color:var(--accent)}.metric-value.blue{color:var(--accent2)}
+.metric-value.green{color:var(--green)}.metric-value.orange{color:var(--orange)}
+.metric-sub{font-size:11px;color:var(--muted);margin-top:4px;font-family:var(--mono)}
+
+/* CONTROLS */
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1.2rem;align-items:center}
+.controls input,.controls select{background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--font);font-size:13px;padding:8px 12px;outline:none;transition:border-color .2s}
+.controls input{min-width:200px;flex:1}
+.controls input:focus,.controls select:focus{border-color:var(--accent)}
+.controls select option{background:#1c2030}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--font);font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;text-decoration:none;transition:all .15s}
+.btn-primary{background:var(--accent);color:#0d0f14}
+.btn-primary:hover{background:#e0a520}
+.btn-danger{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+.btn-danger:hover{background:rgba(248,113,113,.2)}
+.btn-secondary{background:var(--surface2);color:var(--muted);border:1px solid var(--border2)}
+.btn-secondary:hover{color:var(--text);border-color:var(--border2)}
+.btn-sm{padding:5px 10px;font-size:11px;border-radius:6px}
+.btn-edit{background:rgba(59,130,246,.1);color:var(--accent2);border:1px solid rgba(59,130,246,.2)}
+.btn-edit:hover{background:rgba(59,130,246,.2)}
+
+/* TABLE */
+.tbl-wrap{border:1px solid var(--border);border-radius:12px;overflow:hidden;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:860px}
+thead th{background:var(--surface2);color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:10px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface2)}
+td{padding:9px 12px;font-size:12.5px;vertical-align:middle;white-space:nowrap;font-family:var(--mono)}
+td.name-cell{font-family:var(--font);font-weight:500;font-size:13px}
+td.amt{text-align:right}
+td.muted{color:var(--muted)}
+.tfoot-row{background:var(--surface2);border-top:1px solid var(--border2)}
+.tfoot-row td{font-weight:600;color:var(--accent);font-size:12px;padding:9px 12px}
+.tfoot-row td.label{color:var(--muted);font-family:var(--font);font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+
+/* BADGE */
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:3px 8px;border-radius:99px;letter-spacing:.04em;text-transform:uppercase}
+.badge-paid{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.2)}
+.badge-pending{background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.2)}
+.badge-emergency{background:rgba(248,113,113,.12);color:#f87171;border:1px solid rgba(248,113,113,.2)}
+
+/* SECTION HEADER */
+.section-head{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+.section-head h2{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.section-head::after{content:'';flex:1;height:1px;background:var(--border)}
+.count-pill{background:var(--surface2);border:1px solid var(--border);border-radius:99px;font-size:11px;font-family:var(--mono);color:var(--muted);padding:2px 8px}
+
+/* CARD (forms) */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:2rem}
+.card-title{font-size:1.1rem;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem}
+.card-title span{color:var(--accent)}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.form-control{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:var(--font);font-size:13px;padding:9px 12px;outline:none;transition:border-color .2s;width:100%}
+.form-control:focus{border-color:var(--accent)}
+.form-control option{background:#1c2030}
+.form-actions{display:flex;gap:10px;margin-top:1.5rem;justify-content:flex-end}
+.errorlist{list-style:none;color:var(--red);font-size:11px;margin-top:4px}
+.bal-due{color:var(--orange);font-weight:500}
+
+/* CONFIRM */
+.confirm-box{max-width:480px;margin:3rem auto}
+.confirm-box .warn{color:var(--red);font-size:1.6rem;margin-bottom:.5rem}
+
+/* USERS TABLE */
+.role-admin{color:var(--accent)}
+.role-viewer{color:var(--accent2)}
+
+@media(max-width:600px){.main{padding:1rem}nav{padding:.8rem 1rem}}
+</style>
+</head>
+<body>
+{% if user.is_authenticated %}
+<nav>
+  <div class="nav-brand">Cartoons <span>Boys</span></div>
+  <div class="nav-links">
+    <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+    <a href="{% url 'pending_summary' %}" class="{% if request.resolver_match.url_name == 'pending_summary' %}active{% endif %}">Pending</a>
+    {% if user.is_staff %}
+    <a href="{% url 'add_loan' %}" class="{% if request.resolver_match.url_name == 'add_loan' %}active{% endif %}">+ Add Loan</a>
+    <a href="{% url 'manage_users' %}" class="{% if request.resolver_match.url_name == 'manage_users' %}active{% endif %}">Users</a>
+    {% endif %}
+  </div>
+  <div class="nav-user">
+    <span>{{ user.username }}</span>
+    {% if user.is_staff %}<span class="badge-admin">Admin</span>{% else %}<span class="badge-viewer">Viewer</span>{% endif %}
+    <a href="{% url 'logout' %}" class="nav-btn">Logout</a>
+  </div>
+</nav>
+{% endif %}
+
+<div class="main">
+{% if messages %}
+<div class="messages">
+{% for msg in messages %}
+<div class="msg msg-{{ msg.tags }}">{{ msg }}</div>
+{% endfor %}
+</div>
+{% endif %}
+{% block content %}{% endblock %}
+</div>
+</body>
+</html>

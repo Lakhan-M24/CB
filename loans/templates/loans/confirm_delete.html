@@ -1,0 +1,20 @@
+{% extends 'loans/base.html' %}
+{% block title %}Delete Loan{% endblock %}
+{% block content %}
+<div class="confirm-box">
+  <div class="card">
+    <div class="warn">⚠</div>
+    <div class="card-title">Delete <span>Loan #{{ loan.sr }}</span>?</div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:1.5rem">
+      You are about to permanently delete the loan record for <strong style="color:var(--text)">{{ loan.name }}</strong> — ₹{{ loan.loan_amount }}. This cannot be undone.
+    </p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-actions">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

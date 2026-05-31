@@ -1,0 +1,99 @@
+{% extends 'loans/base.html' %}
+{% block title %}Dashboard — Cartoons Boys{% endblock %}
+{% block content %}
+
+<!-- Metrics -->
+<div class="metrics">
+  <div class="metric gold"><div class="metric-label">Total Loaned</div><div class="metric-value gold">₹{{ total_loan|floatformat:0 }}</div></div>
+  <div class="metric blue"><div class="metric-label">Total Interest</div><div class="metric-value blue">₹{{ total_interest|floatformat:0 }}</div></div>
+  <div class="metric orange"><div class="metric-label">Outstanding</div><div class="metric-value orange">₹{{ total_balance|floatformat:0 }}</div><div class="metric-sub">{{ pending_count }} pending</div></div>
+  <div class="metric green"><div class="metric-label">Cleared</div><div class="metric-value green">{{ paid_count }}</div><div class="metric-sub">loans fully paid</div></div>
+  <div class="metric blue"><div class="metric-label">Recovery Rate</div><div class="metric-value blue">{{ recovery }}%</div></div>
+</div>
+
+<!-- Controls -->
+<div class="section-head">
+  <h2>Loan Records</h2>
+  <span class="count-pill">{{ loans|length }}</span>
+</div>
+
+<form method="get" class="controls">
+  <input type="text" name="search" value="{{ search }}" placeholder="Search by name…">
+  <select name="status" onchange="this.form.submit()">
+    <option value="">All statuses</option>
+    <option value="paid" {% if status_filter == 'paid' %}selected{% endif %}>Paid</option>
+    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+    <option value="emergency" {% if status_filter == 'emergency' %}selected{% endif %}>Emergency</option>
+  </select>
+  <button type="submit" class="btn btn-secondary">Search</button>
+  {% if search or status_filter %}<a href="{% url 'dashboard' %}" class="btn btn-secondary">Clear</a>{% endif %}
+  {% if user.is_staff %}<a href="{% url 'add_loan' %}" class="btn btn-primary">+ Add Loan</a>{% endif %}
+</form>
+
+<!-- Table -->
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>Sr</th>
+      <th>Date</th>
+      <th>Name</th>
+      <th style="text-align:right">Loan (₹)</th>
+      <th style="text-align:right">Interest</th>
+      <th>Rate</th>
+      <th>Duration</th>
+      <th style="text-align:right">Final (₹)</th>
+      <th>Status</th>
+      <th>Paid Date</th>
+      <th style="text-align:right">Balance</th>
+      <th>Remark</th>
+      {% if user.is_staff %}<th>Actions</th>{% endif %}
+    </tr>
+  </thead>
+  <tbody>
+  {% for loan in loans %}
+    <tr>
+      <td class="muted">{{ loan.sr }}</td>
+      <td class="muted">{{ loan.date|date:"d-m-Y" }}</td>
+      <td class="name-cell">{{ loan.name }}</td>
+      <td class="amt">{% if loan.loan_amount %}₹{{ loan.loan_amount|floatformat:0 }}{% else %}<span class="muted">—</span>{% endif %}</td>
+      <td class="amt">{% if loan.interest %}₹{{ loan.interest|floatformat:0 }}{% else %}<span class="muted">—</span>{% endif %}</td>
+      <td>{{ loan.interest_rate }}</td>
+      <td class="muted">{{ loan.duration|default:"—" }}</td>
+      <td class="amt">{% if loan.final_amount %}₹{{ loan.final_amount|floatformat:0 }}{% else %}<span class="muted">—</span>{% endif %}</td>
+      <td>
+        {% if loan.status == 'paid' %}<span class="badge badge-paid">Paid</span>
+        {% elif loan.status == 'pending' %}<span class="badge badge-pending">Pending</span>
+        {% else %}<span class="badge badge-emergency">Emergency</span>{% endif %}
+      </td>
+      <td class="muted">{{ loan.paid_date|date:"d-m-Y"|default:"—" }}</td>
+      <td class="amt {% if loan.balance > 0 %}bal-due{% else %}muted{% endif %}">{% if loan.balance %}₹{{ loan.balance|floatformat:0 }}{% else %}—{% endif %}</td>
+      <td class="muted">{{ loan.remark|default:"—" }}</td>
+      {% if user.is_staff %}
+      <td>
+        <div style="display:flex;gap:6px">
+          <a href="{% url 'edit_loan' loan.pk %}" class="btn btn-sm btn-edit">Edit</a>
+          <a href="{% url 'delete_loan' loan.pk %}" class="btn btn-sm btn-danger">Del</a>
+        </div>
+      </td>
+      {% endif %}
+    </tr>
+  {% empty %}
+    <tr><td colspan="13" style="text-align:center;padding:2.5rem;color:var(--muted)">No records found.</td></tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr class="tfoot-row">
+      <td colspan="3" class="label">Totals</td>
+      <td class="amt">₹{{ total_loan|floatformat:0 }}</td>
+      <td class="amt">₹{{ total_interest|floatformat:0 }}</td>
+      <td colspan="2"></td>
+      <td class="amt">₹{{ total_final|floatformat:0 }}</td>
+      <td colspan="2"></td>
+      <td class="amt {% if total_balance > 0 %}bal-due{% endif %}">₹{{ total_balance|floatformat:0 }}</td>
+      <td colspan="{% if user.is_staff %}2{% else %}1{% endif %}"></td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'loans/base.html' %}
+{% block title %}Manage Users — Cartoons Boys{% endblock %}
+{% block content %}
+<div class="section-head">
+  <h2>User Management</h2>
+  <a href="{% url 'add_user' %}" class="btn btn-primary" style="font-size:11px;padding:6px 12px">+ Add User</a>
+</div>
+<div class="tbl-wrap">
+<table>
+  <thead>
+    <tr><th>#</th><th>Username</th><th>Full Name</th><th>Role</th><th>Joined</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+  {% for u in users %}
+  <tr>
+    <td class="muted">{{ u.id }}</td>
+    <td class="name-cell">{{ u.username }}</td>
+    <td>{{ u.get_full_name|default:"—" }}</td>
+    <td>
+      {% if u.is_superuser %}<span class="badge badge-emergency">Superuser</span>
+      {% elif u.is_staff %}<span class="badge badge-paid role-admin">Admin</span>
+      {% else %}<span class="badge badge-pending role-viewer">Viewer</span>{% endif %}
+    </td>
+    <td class="muted">{{ u.date_joined|date:"d-m-Y" }}</td>
+    <td>
+      {% if u != request.user %}
+      <a href="{% url 'delete_user' u.id %}" class="btn btn-sm btn-danger">Delete</a>
+      {% else %}<span class="muted" style="font-size:11px">You</span>{% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<div style="margin-top:1rem;font-size:12px;color:var(--muted)">
+  <strong style="color:var(--accent)">Admin</strong> — can Add, Edit, Delete loans and manage users &nbsp;|&nbsp;
+  <strong style="color:var(--accent2)">Viewer</strong> — can only view dashboard and pending amounts
+</div>
+{% endblock %}

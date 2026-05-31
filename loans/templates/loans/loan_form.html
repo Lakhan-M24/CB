@@ -1,0 +1,25 @@
+{% extends 'loans/base.html' %}
+{% block title %}{{ action }} Loan — Cartoons Boys{% endblock %}
+{% block content %}
+<div style="max-width:860px;margin:0 auto">
+  <div class="card">
+    <div class="card-title">{% if action == 'Add' %}+{% else %}✎{% endif %} <span>{{ action }}</span> Loan Record</div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-grid">
+        {% for field in form %}
+        <div class="form-group">
+          <label>{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<ul class="errorlist">{% for e in field.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <div class="form-actions">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">{{ action }} Record</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
